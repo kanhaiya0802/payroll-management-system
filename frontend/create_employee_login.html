@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Employee Login</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+</head>
+
+<body>
+  <div class="container" style="max-width: 900px;">
+    <div class="card">
+      <h1 class="title">🔑 Create Employee Login</h1>
+      <p class="subtitle">Admin only — set temporary password</p>
+
+      <form id="loginForm" style="margin-top:14px;">
+        <div class="form-group">
+          <label>Employee ID</label>
+          <input type="number" id="employee_id" placeholder="1" required />
+        </div>
+
+        <div class="form-group">
+          <label>Employee Email</label>
+          <input type="email" id="email" placeholder="employee@gmail.com" required />
+        </div>
+
+        <div class="form-group">
+          <label>Temporary Password</label>
+          <input type="text" id="password" placeholder="Temp@12345" required />
+        </div>
+
+        <button class="btn" type="submit">Create Login</button>
+        <p id="msg" class="msg"></p>
+      </form>
+
+      <div style="display:flex; gap:10px; margin-top:14px;">
+        <a class="btn" href="admin_dashboard.html" style="text-decoration:none; text-align:center;">⬅ Back</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/common.js"></script>
+  <script>
+    requireAuth("admin");
+
+    const form = document.getElementById("loginForm");
+    const msg = document.getElementById("msg");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      msg.textContent = "Creating login...";
+      msg.className = "msg";
+
+      const empId = document.getElementById("employee_id").value;
+      const payload = {
+        email: document.getElementById("email").value.trim(),
+        password: document.getElementById("password").value.trim()
+      };
+
+      try {
+        const data = await apiFetch(`/employees/${empId}/create-login`, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+
+        msg.textContent = "Login created ✅ Employee must change password on first login.";
+        msg.className = "msg success";
+        form.reset();
+
+      } catch (err) {
+        msg.textContent = err.message;
+        msg.className = "msg error";
+      }
+    });
+  </script>
+</body>
+</html>

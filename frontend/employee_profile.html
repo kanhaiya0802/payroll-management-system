@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+</head>
+
+<body>
+  <div class="container" style="max-width: 900px;">
+    <div class="card">
+      <h1 class="title">👤 My Profile</h1>
+      <p class="subtitle">Employee access</p>
+
+      <button class="btn" id="loadBtn" style="margin-top:14px;">Load Profile</button>
+      <p id="msg" class="msg"></p>
+
+      <div id="profileBox" style="margin-top:16px;"></div>
+
+      <div style="display:flex; gap:10px; margin-top:14px;">
+        <a class="btn" href="employee_dashboard.html" style="text-decoration:none; text-align:center;">⬅ Back</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/common.js"></script>
+  <script>
+    requireAuth("employee");
+
+    const loadBtn = document.getElementById("loadBtn");
+    const msg = document.getElementById("msg");
+    const profileBox = document.getElementById("profileBox");
+
+    loadBtn.addEventListener("click", async () => {
+      msg.textContent = "Loading...";
+      msg.className = "msg";
+      profileBox.innerHTML = "";
+
+      try {
+        const emp = await apiFetch("/employee/profile", { method: "GET" });
+
+        msg.textContent = "Profile loaded ✅";
+        msg.className = "msg success";
+
+        profileBox.innerHTML = `
+          <div class="card" style="border-radius:18px;">
+            <p><b>ID:</b> ${emp.id}</p>
+            <p><b>Emp Code:</b> ${emp.emp_code}</p>
+            <p><b>Name:</b> ${emp.full_name}</p>
+            <p><b>Email:</b> ${emp.email}</p>
+            <p><b>Phone:</b> ${emp.phone ?? "-"}</p>
+            <p><b>Designation:</b> ${emp.designation ?? "-"}</p>
+            <p><b>Department:</b> ${emp.department ?? "-"}</p>
+            <p><b>Basic Salary:</b> ₹${emp.basic_salary}</p>
+          </div>
+        `;
+      } catch (err) {
+        msg.textContent = err.message;
+        msg.className = "msg error";
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payroll History</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+</head>
+
+<body>
+  <div class="container" style="max-width: 1100px;">
+    <div class="card">
+      <h1 class="title">🧾 Payroll History</h1>
+      <p class="subtitle">Admin only — download employee payslips</p>
+
+      <form id="historyForm" style="margin-top:14px;">
+        <div class="form-group">
+          <label>Employee ID</label>
+          <input type="number" id="employee_id" placeholder="1" required />
+        </div>
+
+        <button class="btn" type="submit">Load Payroll</button>
+        <p id="msg" class="msg"></p>
+      </form>
+
+      <div style="overflow:auto; margin-top:16px;">
+        <table style="width:100%; border-collapse:collapse;">
+          <thead>
+            <tr style="text-align:left; color:#cbd5e1;">
+              <th style="padding:10px;">Payroll ID</th>
+              <th style="padding:10px;">Month</th>
+              <th style="padding:10px;">Year</th>
+              <th style="padding:10px;">Basic Salary</th>
+              <th style="padding:10px;">Attendance</th>
+              <th style="padding:10px;">Net Salary</th>
+              <th style="padding:10px;">Download</th>
+            </tr>
+          </thead>
+          <tbody id="payBody"></tbody>
+        </table>
+      </div>
+
+      <div style="display:flex; gap:10px; margin-top:14px;">
+        <a class="btn" href="admin_dashboard.html" style="text-decoration:none; text-align:center;">⬅ Back</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/common.js"></script>
+  <script>
+    requireAuth("admin");
+
+    const historyForm = document.getElementById("historyForm");
+    const msg = document.getElementById("msg");
+    const payBody = document.getElementById("payBody");
+
+    async function downloadPayslip(payrollId, empId, month, year) {
+      try {
+        const token = localStorage.getItem("token");
+
+        const res = await fetch(`http://127.0.0.1:8000/payslip/download/${payrollId}`, {
+          headers: { "Authorization": "Bearer " + token }
+        });
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          alert(errData.detail || "Download failed");
+          return;
+        }
+
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `Payslip_EMP${empId}_${month}-${year}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        window.URL.revokeObjectURL(url);
+      } catch (err) {
+        alert("Download error: " + err.message);
+      }
+    }
+
+    historyForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      msg.textContent = "Loading payroll...";
+      msg.className = "msg";
+      payBody.innerHTML = "";
+
+      const empId = Number(document.getElementById("employee_id").value);
+
+      try {
+        const payrolls = await apiFetch(`/payroll/${empId}`, { method: "GET" });
+
+        if (payrolls.length === 0) {
+          msg.textContent = "No payroll found for this employee.";
+          msg.className = "msg error";
+          return;
+        }
+
+        payrolls.forEach(p => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td style="padding:10px; border-top:1px solid rgba(255,255,255,0.08);">${p.id}</td>
+            <td style="padding:10px; border-top:1px solid rgba(255,255,255,0.08);">${p.month}</td>
+            <td style="padding:10px; border-top:1px solid rgba(255,255,255,0.08);">${p.year}</td>
+            <td style="padding:10px; border-top:1px solid rgba(255,255,255,0.08);">₹${p.basic_salary}</td>
+            <td style="padding:10px; border-top:1px solid rgba(255,255,255,0.08);">${p.days_present}/${p.total_working_days}</td>
+            <td style="padding:10px; border-top:1px solid rgba(255,255,255,0.08);"><b>₹${p.net_salary}</b></td>
+            <td style="padding:10px; border-top:1px solid rgba(255,255,255,0.08);">
+              <button class="btn" style="padding:8px 12px; border-radius:12px; font-size:13px;"
+                onclick="downloadPayslip(${p.id}, ${empId}, ${p.month}, ${p.year})">
+                Download PDF
+              </button>
+            </td>
+          `;
+          payBody.appendChild(tr);
+        });
+
+        msg.textContent = `Loaded ${payrolls.length} payslip(s) ✅`;
+        msg.className = "msg success";
+
+      } catch (err) {
+        msg.textContent = err.message;
+        msg.className = "msg error";
+      }
+    });
+  </script>
+</body>
+</html>

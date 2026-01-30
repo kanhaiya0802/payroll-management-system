@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Employee</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+</head>
+
+<body>
+  <div class="container" style="max-width: 900px;">
+    <div class="card">
+      <h1 class="title">➕ Add Employee</h1>
+      <p class="subtitle">Admin only</p>
+
+      <form id="empForm" class="form" style="margin-top:14px;">
+        <div class="form-group">
+          <label>Employee Code</label>
+          <input id="emp_code" placeholder="EMP002" required />
+        </div>
+
+        <div class="form-group">
+          <label>Full Name</label>
+          <input id="full_name" placeholder="Employee name" required />
+        </div>
+
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="email" placeholder="employee@gmail.com" required />
+        </div>
+
+        <div class="form-group">
+          <label>Phone</label>
+          <input id="phone" placeholder="9876543210" />
+        </div>
+
+        <div class="form-group">
+          <label>Designation</label>
+          <input id="designation" placeholder="Developer" />
+        </div>
+
+        <div class="form-group">
+          <label>Department</label>
+          <input id="department" placeholder="IT" />
+        </div>
+
+        <div class="form-group">
+          <label>Basic Salary</label>
+          <input type="number" id="basic_salary" placeholder="30000" required />
+        </div>
+
+        <div class="form-group">
+          <label>Joining Date</label>
+          <input type="date" id="joining_date" />
+        </div>
+
+        <button class="btn" type="submit">Add Employee</button>
+        <p id="msg" class="msg"></p>
+      </form>
+
+      <div style="display:flex; gap:10px; margin-top:14px;">
+        <a class="btn" href="admin_dashboard.html" style="text-decoration:none; text-align:center;">⬅ Back</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/common.js"></script>
+  <script>
+    requireAuth("admin");
+
+    const empForm = document.getElementById("empForm");
+    const msg = document.getElementById("msg");
+
+    empForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      msg.textContent = "Saving...";
+      msg.className = "msg";
+
+      const payload = {
+        emp_code: document.getElementById("emp_code").value.trim(),
+        full_name: document.getElementById("full_name").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        phone: document.getElementById("phone").value.trim() || null,
+        designation: document.getElementById("designation").value.trim() || null,
+        department: document.getElementById("department").value.trim() || null,
+        basic_salary: Number(document.getElementById("basic_salary").value),
+        joining_date: document.getElementById("joining_date").value || null
+      };
+
+      try {
+        const data = await apiFetch("/employees/", {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+
+        msg.textContent = "Employee added ✅ ID: " + data.id;
+        msg.className = "msg success";
+        empForm.reset();
+      } catch (err) {
+        msg.textContent = err.message;
+        msg.className = "msg error";
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mark Attendance</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+</head>
+
+<body>
+  <div class="container" style="max-width: 900px;">
+    <div class="card">
+      <h1 class="title">🗓️ Mark Attendance</h1>
+      <p class="subtitle">Admin only</p>
+
+      <form id="attForm" style="margin-top:14px;">
+        <div class="form-group">
+          <label>Employee ID</label>
+          <input type="number" id="employee_id" placeholder="1" required />
+        </div>
+
+        <div class="form-group">
+          <label>Month</label>
+          <input type="number" id="month" placeholder="1-12" required />
+        </div>
+
+        <div class="form-group">
+          <label>Year</label>
+          <input type="number" id="year" placeholder="2026" required />
+        </div>
+
+        <div class="form-group">
+          <label>Days Present</label>
+          <input type="number" id="days_present" placeholder="20" required />
+        </div>
+
+        <div class="form-group">
+          <label>Total Working Days</label>
+          <input type="number" id="total_working_days" placeholder="26" required />
+        </div>
+
+        <button class="btn" type="submit">Save Attendance</button>
+        <p id="msg" class="msg"></p>
+      </form>
+
+      <div style="display:flex; gap:10px; margin-top:14px;">
+        <a class="btn" href="admin_dashboard.html" style="text-decoration:none; text-align:center;">⬅ Back</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/common.js"></script>
+  <script>
+    requireAuth("admin");
+
+    const attForm = document.getElementById("attForm");
+    const msg = document.getElementById("msg");
+
+    attForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      msg.textContent = "Saving...";
+      msg.className = "msg";
+
+      const payload = {
+        employee_id: Number(document.getElementById("employee_id").value),
+        month: Number(document.getElementById("month").value),
+        year: Number(document.getElementById("year").value),
+        days_present: Number(document.getElementById("days_present").value),
+        total_working_days: Number(document.getElementById("total_working_days").value)
+      };
+
+      try {
+        const data = await apiFetch("/attendance/", {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+
+        msg.textContent = "Attendance saved ✅ (ID: " + data.id + ")";
+        msg.className = "msg success";
+        attForm.reset();
+
+      } catch (err) {
+        msg.textContent = err.message;
+        msg.className = "msg error";
+      }
+    });
+  </script>
+</body>
+</html>

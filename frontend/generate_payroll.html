@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generate Payroll</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+</head>
+
+<body>
+  <div class="container" style="max-width: 900px;">
+    <div class="card">
+      <h1 class="title">💰 Generate Payroll</h1>
+      <p class="subtitle">Admin only</p>
+
+      <form id="payForm" style="margin-top:14px;">
+        <div class="form-group">
+          <label>Employee ID</label>
+          <input type="number" id="employee_id" placeholder="1" required />
+        </div>
+
+        <div class="form-group">
+          <label>Month</label>
+          <input type="number" id="month" placeholder="1-12" required />
+        </div>
+
+        <div class="form-group">
+          <label>Year</label>
+          <input type="number" id="year" placeholder="2026" required />
+        </div>
+
+        <button class="btn" type="submit">Generate Payslip</button>
+        <p id="msg" class="msg"></p>
+      </form>
+
+      <div id="result" style="margin-top:18px;"></div>
+
+      <div style="display:flex; gap:10px; margin-top:14px;">
+        <a class="btn" href="admin_dashboard.html" style="text-decoration:none; text-align:center;">⬅ Back</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/common.js"></script>
+  <script>
+    requireAuth("admin");
+
+    const payForm = document.getElementById("payForm");
+    const msg = document.getElementById("msg");
+    const result = document.getElementById("result");
+
+    payForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      msg.textContent = "Generating...";
+      msg.className = "msg";
+      result.innerHTML = "";
+
+      const payload = {
+        employee_id: Number(document.getElementById("employee_id").value),
+        month: Number(document.getElementById("month").value),
+        year: Number(document.getElementById("year").value)
+      };
+
+      try {
+        const data = await apiFetch("/payroll/generate", {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+
+        msg.textContent = "Payroll generated ✅";
+        msg.className = "msg success";
+
+        result.innerHTML = `
+          <div class="card" style="margin-top:14px; border-radius:18px;">
+            <h2 style="font-size:18px; margin-bottom:10px;">Payslip Summary</h2>
+            <p><b>Employee ID:</b> ${data.employee_id}</p>
+            <p><b>Month/Year:</b> ${data.month}/${data.year}</p>
+            <p><b>Days Present:</b> ${data.days_present} / ${data.total_working_days}</p>
+            <p><b>Basic Salary:</b> ₹${data.basic_salary}</p>
+            <p><b>HRA:</b> ₹${data.hra}</p>
+            <p><b>DA:</b> ₹${data.da}</p>
+            <p><b>PF:</b> ₹${data.pf}</p>
+            <p><b>Net Salary:</b> ₹${data.net_salary}</p>
+          </div>
+        `;
+
+      } catch (err) {
+        msg.textContent = err.message;
+        msg.className = "msg error";
+      }
+    });
+  </script>
+</body>
+</html>

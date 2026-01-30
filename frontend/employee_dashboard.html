@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Employee Dashboard - Payroll</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+</head>
+
+<body>
+  <div class="container" style="max-width: 900px;">
+    <div class="card">
+      <h1 class="title">Employee Dashboard</h1>
+      <p class="subtitle">View your profile and salary slips</p>
+
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:14px; margin-top:18px;">
+        
+        <a class="btn" href="employee_profile.html" style="text-decoration:none; text-align:center;">👤 My Profile</a>
+
+        <a class="btn" href="employee_payslips.html" style="text-decoration:none; text-align:center;">🧾 My Payslips</a>
+
+      </div>
+
+      <button class="btn" style="margin-top:18px; background: linear-gradient(135deg, #fb7185, #f97316);" onclick="logout()">
+        Logout
+      </button>
+
+      <p class="footer-note">Employee Access </p>
+      <p class="footer-note">© 2026 ABC Tech Pvt. Ltd. All rights reserved. </p>
+    </div>
+  </div>
+
+  <script src="js/common.js"></script>
+  <script>
+    requireAuth("employee");
+  </script>
+</body>
+</html>
