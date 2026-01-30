@@ -102,7 +102,7 @@ PayrollManagement/
 git clone https://github.com/<your-username>/payroll-management-system.git
 cd payroll-management-system
 ```
-###2️⃣ Backend Setup (FastAPI)
+### 2️⃣ Backend Setup (FastAPI)
 Go inside backend folder:
 ```bash
 cd backend
@@ -113,7 +113,7 @@ Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
-###3️⃣ MySQL Setup
+### 3️⃣ MySQL Setup
 Create database:
 ```bash
 CREATE DATABASE payroll_db;
@@ -127,7 +127,7 @@ DB_PASSWORD=your_password
 DB_NAME=payroll_db
 DB_PORT=3306
 ```
-###4️⃣ Run Backend
+### 4️⃣ Run Backend
 ```bash
 python -m uvicorn main:app --reload
 ```
@@ -137,43 +137,38 @@ Backend running at:
 Swagger Docs:
 📌 http://127.0.0.1:8000/docs
 
-###5️⃣ Run Frontend
+### 5️⃣ Run Frontend
 Open frontend/login.html using VS Code Live Server.
 
 ---
 
-##🔑 User Roles & Flow
-###✅ Admin
+## 🔑 User Roles & Flow
+### ✅ Admin
 
 Add employee
 Create employee login (temporary password)
 Attendance → Payroll generation → Payslip download
 
-###✅ Employee
-
+### ✅ Employee
 Login using temporary password
 First login → must change password
 View profile + payslips
 Download payslip PDF
-
 ---
 
-##✨ Future Enhancements
-
+## ✨ Future Enhancements
 Edit employee details
 Search/filter employees
 Email payslip feature
 Payslip zip download
 Deploy on cloud (Render/Railway)
-
 ---
 
-##👩‍💻 Developer
-
+## 👩‍💻 Developer
 Name: Kanhaiya Jee
 Role: B.Tech IT Student
 Project Type: Full Stack Web Application
+---
 
-##📜 License
-
+## 📜 License
 This project is for learning and educational purposes.
