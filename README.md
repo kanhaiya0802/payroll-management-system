@@ -150,10 +150,12 @@ Create employee login (temporary password)
 Attendance → Payroll generation → Payslip download
 
 ### ✅ Employee
+
 Login using temporary password
 First login → must change password
 View profile + payslips
 Download payslip PDF
+
 ---
 
 ## ✨ Future Enhancements
@@ -162,12 +164,14 @@ Search/filter employees
 Email payslip feature
 Payslip zip download
 Deploy on cloud (Render/Railway)
+
 ---
 
 ## 👩‍💻 Developer
 Name: Kanhaiya Jee
 Role: B.Tech IT Student
 Project Type: Full Stack Web Application
+
 ---
 
 ## 📜 License
