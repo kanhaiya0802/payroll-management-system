@@ -2,13 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 import os
 
-DB_USER = os.getenv("MYSQLUSER")
-DB_PASSWORD = os.getenv("MYSQLPASSWORD")
-DB_HOST = os.getenv("MYSQLHOST")
-DB_PORT = os.getenv("MYSQLPORT")
-DB_NAME = os.getenv("MYSQLDATABASE")
-
-DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+DATABASE_URL = os.getenv("MYSQL_URL")
 
 engine = create_engine(DATABASE_URL, pool_pre_ping=True)
 
