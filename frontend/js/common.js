@@ -1,4 +1,4 @@
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = "https://payroll-management-system-production-7089.up.railway.app";
 
 function getToken() {
   return localStorage.getItem("token");
