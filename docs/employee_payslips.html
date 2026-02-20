@@ -51,7 +51,7 @@
       try {
         const token = localStorage.getItem("token");
 
-        const res = await fetch(`http://127.0.0.1:8000/payslip/download/${payrollId}`, {
+        const res = await fetch(`${API_BASE}/payslip/download/${payrollId}`, {
           headers: { "Authorization": "Bearer " + token }
         });
 
